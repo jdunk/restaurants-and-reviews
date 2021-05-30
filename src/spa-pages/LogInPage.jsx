@@ -167,7 +167,7 @@ export default function LogInPage(props) {
           </Box>
           
           { isProcessing && 
-          <CircularProgress size={25} color='white' />
+          <CircularProgress size={25} color='inherit' />
           }
         </Button>
         <Box mt={3}>
