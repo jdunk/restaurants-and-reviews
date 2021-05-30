@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
-import matchesEmailRegex from '../utils/email-regex'
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const matchesEmailRegex = require('../utils/email-regex')
 
 const SALT_WORK_FACTOR = Number(process.env.SALT_WORK_FACTOR);
 
@@ -58,7 +58,7 @@ schema.methods.validatePassword = async function validatePassword(str) {
   return bcrypt.compare(str, this.password);
 };
 
-export default mongoose.models[modelName] || mongoose.model(
+module.exports = mongoose.models[modelName] || mongoose.model(
   modelName,
   schema
 );

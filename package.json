@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "generate-random-key": "node src/scripts/generate-random-key.js",
-    "grant-admin-to-user": "node --es-module-specifier-resolution=node src/scripts/grant-admin-to-user.js"
+    "grant-admin-to-user": "node --es-module-specifier-resolution=node src/scripts/grant-admin-to-user.mjs"
   },
   "dependencies": {
     "@fontsource/roboto": "^4.3.0",

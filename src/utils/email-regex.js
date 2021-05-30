@@ -1,3 +1,3 @@
-export default function matchesEmailRegex(str) {
+module.exports = function matchesEmailRegex(str) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
-}
+};
