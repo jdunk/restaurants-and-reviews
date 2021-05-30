@@ -10,4 +10,13 @@ const apiClient = axios.create({
   }
 });
 
+apiClient.interceptors.response.use(function (response) {
+    console.log({ axiosResponse: response })
+    return response;
+  }, function (error) {
+    console.log({ axiosErrorResponse: error })
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;
