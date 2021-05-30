@@ -11,8 +11,8 @@ const schema = new mongoose.Schema({
   email: {
     type: String,
     lowercase: true,
-    unique: [true, "User with that email address already exists"],
-    required: [true, 'Email is required.'],
+    unique: true,
+    required: [true, 'Email is required'],
     validate: [
       matchesEmailRegex,
       'Invalid email',
@@ -20,11 +20,13 @@ const schema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: [true, 'Name is required.'],
+    required: [true, 'Name is required'],
+    minlength: [2, 'Name must be at least 2 characters']
   },
   password: {
     type: String,
-    required: [true, 'Password is required.'],
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters']
   },
   role: {
     type: String,

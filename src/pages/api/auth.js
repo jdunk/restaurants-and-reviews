@@ -15,14 +15,31 @@ export default async function handler(req, resp) {
   const { body } = req
   const { email, password } = body
 
-  if (!email || !password) {
-    return resp.status(400).end('Email and password are required')
+  let fieldErrors = [];
+
+  ['email','password'].forEach(fieldName => {
+    const capitalizedFn = `${fieldName.charAt(0).toUpperCase()}${fieldName.slice(1)}`;
+    if (!body[fieldName])
+      fieldErrors.push([fieldName, `${capitalizedFn} is required`]);
+  });
+
+  if (fieldErrors.length) {
+    return resp.status(400).json({
+      error: {
+        message: "Error in form.",
+        errors: fieldErrors
+      }
+    });
   }
 
   const userInDb = await User.findOne({ email: req.body.email })
 
   if (!userInDb || !bcrypt.compareSync(password, userInDb.password)) {
-    return resp.status(403).json({ error: 'Invalid login' });
+    return resp.status(403).json({
+      error: {
+        message: 'Invalid login.'
+      },
+    });
   }
   
   setAuthCookie(userInDb);

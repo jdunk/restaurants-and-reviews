@@ -1,23 +1,29 @@
-import React from 'react'
+import { useState } from 'react';
+import useFormValues from '../hooks/useFormValues';
+import useFormErrors from '../hooks/useFormErrors';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../utils/client/api-client';
 import { useAuth } from '../hooks/auth';
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField';
+
 import { makeStyles } from '@material-ui/core/styles';
+import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Container from '@material-ui/core/Container';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
-import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Paper from '@material-ui/core/Paper';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
+import TextField from '@material-ui/core/TextField';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const useStyles = makeStyles({
   root: {
@@ -33,14 +39,21 @@ const useStyles = makeStyles({
 export default function SignUpPage(props) {
   const history = useHistory();
   const { auth } = useAuth();
-  console.log({ loginpageprops: props })
-  let [accountType, setAccountType] = React.useState('')
-  let [name, setName] = React.useState('')
-  let [email, setEmail] = React.useState('')
-  let [password, setPassword] = React.useState('')
-  let [showPassword, setShowPassword] = React.useState(false)
-  let [formErrorMsg, setFormErrorMsg] = React.useState('')
-  let [isProcessing, setIsProcessing] = React.useState(false)
+
+  let {
+    values,
+    bindField
+  } = useFormValues({
+    name: '',
+    email: '',
+    password: '',
+    accountType: '',
+  });
+
+  let {setFieldErrors, fieldHasError, errorMessageFor} = useFormErrors();
+  let [showPassword, setShowPassword] = useState(false);
+  let [formErrorMsg, setFormErrorMsg] = useState(null);
+  let [isProcessing, setIsProcessing] = useState(false);
 
   const classes = useStyles();
 
@@ -54,16 +67,14 @@ export default function SignUpPage(props) {
 
   const signUp = async (e) => {
     e.preventDefault();
-    console.log({ auth });
+    setFormErrorMsg(null);
+    setFieldErrors([]);
     setIsProcessing(true);
 
+    let resp;
+
     try {
-      const resp = await apiClient.post('/api/signup', {
-        email,
-        password,
-        name,
-        accountType,
-      });
+      resp = await apiClient.post('/api/signup', values);
 
       console.log({ signUpResponse: resp });
 
@@ -75,75 +86,67 @@ export default function SignUpPage(props) {
       history.push('/restaurants');
     } catch (e) {
       setIsProcessing(false);
-      setFormErrorMsg(e.toString());
-      console.log(e);
+
+      if (e.response?.status != 400) {
+        setFormErrorMsg('Unknown error. Perhaps try again later.');
+      }
+
+      setFormErrorMsg(e.response.data?.error?.message);
+
+      const _fieldErrors = e.response.data?.error?.errors;
+      if (!_fieldErrors) return;
+
+      setFieldErrors(_fieldErrors);
     }
   }
 
   return (
-    <Box align="center">
-      <form className={classes.root} noValidate autoComplete="off">
-        <Box mb={1}>
-          <FormControl component="fieldset" variant="outlined">
-            <FormLabel component="legend">Account type</FormLabel>
+    <Container align="center">
+    <Box width="400px">
+      <h2>Join us!</h2>
+      <Paper elevation={3}>
 
-            <RadioGroup
-              aria-label="account-type"
-              name="accountType"
-              value={accountType}
-              onChange={e => setAccountType(e.target.value)}
-              variant="outlined"
-            >
-              <Box display='flex'>
-                <Box mr={3}>
-                  <FormControlLabel value="regular" control={<Radio />} label="Reviewer" />
-                </Box>
-                <Box>
-                  <FormControlLabel value="owner" control={<Radio />} label="Owner" />
-                </Box>
-              </Box>
-            </RadioGroup>
-          </FormControl>
-        </Box>
+      <Box py={3}>
+      <form className={classes.root} noValidate autoComplete="off">
         <Box mb={1}>
           <TextField
             variant="outlined"
-            size="medium"
             label="Name"
             placeholder="Firstname McLastname"
             type="text"
             id="name"
-            name="name"
             autoComplete='on'
             required
-            error={false}
-            helperText={''}
-            onChange={(e) => setName(e.target.value)}
+            error={fieldHasError('name')}
+            helperText={errorMessageFor('name')}
+            {...(bindField('name'))}
           />
         </Box>
         <Box mb={1}>
           <TextField
             variant="outlined"
-            size="medium"
             label="Email"
             placeholder="youremail@domain.com"
             type="email"
             id="email"
-            name="email"
             autoComplete='on'
             required
-            error={false}
-            helperText={''}
-            onChange={(e) => setEmail(e.target.value)}
+            error={fieldHasError('email')}
+            helperText={errorMessageFor('email')}
+            {...(bindField('email'))}
           />
         </Box>
         <Box mb={2}>
-          <FormControl required variant="outlined">
+          <FormControl
+            required
+            variant="outlined"
+            error={fieldHasError('password')}
+          >
             <InputLabel htmlFor="password">Password</InputLabel>
             <OutlinedInput
               id="password"
               type={showPassword ? 'text' : 'password'}
-              onChange={(e) => setPassword(e.target.value)}
+              {...(bindField('password'))}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -158,11 +161,40 @@ export default function SignUpPage(props) {
               }
               label={<>Password *</>}
             />
+            <FormHelperText id="password-helper-text">
+              {errorMessageFor('password')}
+            </FormHelperText>
           </FormControl>
         </Box>
-        <div>
+        <Box mb={2}>
+          <FormControl
+            component="fieldset"
+            required
+            error={fieldHasError('accountType')}
+          >
+            <FormLabel component="legend">Account type</FormLabel>
+
+            <RadioGroup
+              row
+              required
+              {...(bindField('accountType'))}
+              aria-label="account-type"
+            >
+              <Box ml={2} mr={3}>
+                <FormControlLabel value="regular" control={<Radio color="primary" />} label="Reviewer" />
+              </Box>
+              <Box>
+                <FormControlLabel value="owner" control={<Radio color="primary" />} label="Owner" />
+              </Box>
+            </RadioGroup>
+            <FormHelperText id="accountType-helper-text">
+              {errorMessageFor('accountType')}
+            </FormHelperText>
+          </FormControl>
+        </Box>
+        <Box color="error.main">
           {formErrorMsg}
-        </div>
+        </Box>
         <Button
           variant="contained"
           color="primary"
@@ -175,11 +207,14 @@ export default function SignUpPage(props) {
           </Box>
           
           { isProcessing && 
-          <CircularProgress size={25} color='white' />
+            <CircularProgress size={25} color='inherit' />
           }
         </Button>
       </form>
+      </Box>
+      </Paper>
 
     </Box>
+    </Container>
   )
 }

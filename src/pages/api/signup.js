@@ -1,6 +1,6 @@
-import { allowedMethodsCheck } from '../../utils/middleware'
-import { useAuth } from '../../hooks/auth'
-import { dbConnect } from '../../utils/db'
+import { allowedMethodsCheck } from '../../middleware/allowed-methods'
+import { useAuth } from '../../middleware/auth'
+import { dbConnect } from '../../utils/server/db'
 import User from '../../models/User'
 
 export default async function handler(req, resp) {
@@ -36,7 +36,7 @@ export default async function handler(req, resp) {
   await User.init();
 
   const { body } = req;
-  const { email, name, password } = body;
+  const { email, name, password, accountType } = body;
 
   const user = new User({
     email,
@@ -44,13 +44,29 @@ export default async function handler(req, resp) {
     password,
   });
 
-  const err = user.validateSync();
+  let additionalErrors = [];
 
-  if (err) {
+  // Only allow 'regular' or 'owner' types to be created via the web
+  if (['regular','owner'].includes(accountType)) {
+    user.role = accountType;
+  }
+  else if (!accountType) {
+    additionalErrors.push(['accountType', 'Account type is required']);
+  }
+  else {
+    additionalErrors.push(['accountType', 'Invalid account type']);
+  }
+
+  const modelValidationErr = user.validateSync();
+
+  if (modelValidationErr || additionalErrors.length) {
     return resp.status(400).json({
       error: {
-        message: "Invalid input",
-        errors: Object.keys(err.errors).map(k => ({[k]: err.errors[k].message}))
+        message: "Error in form.",
+        errors: [
+          ...Object.keys(modelValidationErr?.errors || {}).map(k => ([k, modelValidationErr.errors[k].message])),
+          ...additionalErrors
+        ]
       }
     });
   }
@@ -72,9 +88,9 @@ export default async function handler(req, resp) {
     ) {
       return resp.status(400).json({
         error: {
-          errors: {
-            'email': 'Email unavailable'
-          }
+          errors: [
+            ['email', 'Email unavailable'],
+          ]
         }
       });
     }
@@ -89,7 +105,9 @@ export default async function handler(req, resp) {
     const userFromDb = await User.findOne({ email: user.email });
 
     return resp.status(200).json({
-      data: userFromDb
+      data: {
+        user: userFromDb
+      }
     });
   }
   catch (error) {
