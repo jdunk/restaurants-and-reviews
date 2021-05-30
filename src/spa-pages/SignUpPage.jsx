@@ -17,6 +17,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import Link from '@material-ui/core/Link';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import Paper from '@material-ui/core/Paper';
 import Radio from '@material-ui/core/Radio';
@@ -87,13 +88,13 @@ export default function SignUpPage(props) {
     } catch (e) {
       setIsProcessing(false);
 
-      if (e.response?.status != 400) {
+      if (e.response?.status != 400 || !e.response?.data) {
         setFormErrorMsg('Unknown error. Perhaps try again later.');
       }
 
-      setFormErrorMsg(e.response.data?.error?.message);
+      setFormErrorMsg(e.response?.data?.error?.message);
 
-      const _fieldErrors = e.response.data?.error?.errors;
+      const _fieldErrors = e.response?.data?.error?.errors;
       if (!_fieldErrors) return;
 
       setFieldErrors(_fieldErrors);
@@ -210,6 +211,15 @@ export default function SignUpPage(props) {
             <CircularProgress size={25} color='inherit' />
           }
         </Button>
+        <Box mt={3}>
+          Already have an account?{' '}
+          <Link href="/login" onClick={(e) => {
+            e.preventDefault();
+            history.push('/login');
+          }}>
+            Log In &raquo;
+          </Link>
+        </Box>
       </form>
       </Box>
       </Paper>

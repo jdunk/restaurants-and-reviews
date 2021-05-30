@@ -35,7 +35,7 @@ export default async function handler(req, resp) {
   const userInDb = await User.findOne({ email: req.body.email })
 
   if (!userInDb || !bcrypt.compareSync(password, userInDb.password)) {
-    return resp.status(403).json({
+    return resp.status(400).json({
       error: {
         message: 'Invalid login.'
       },

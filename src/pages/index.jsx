@@ -12,23 +12,10 @@ export default function AppIndex() {
 
     <Router>
       <AppBar />
-      <div>
-        <ul>
-          {
-            routes.map((route, i) => {
-              return (
-                <li key={route.path}>
-                  <Link to={route.path}>{route.path}</Link>
-                </li>
-              )
-            })
-          }
-        </ul>
-      </div>
       <Switch>
         {
           routes.map((route, i) => {
-            return <RouteWithSubRoutes key={i} {...route} />
+            return <RouteWithSubRoutes key={route.path} {...route} />
           })
         }
       </Switch>

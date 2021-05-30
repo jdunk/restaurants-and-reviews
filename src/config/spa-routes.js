@@ -7,19 +7,23 @@ const Empty = function() { return (<>empty page</>); }
 
 const routes = [
   {
-    path: "/signup",
-    component: SignUpPage,
-  },
-  {
     path: "/login",
+    label: "Log In",
     component: LogInPage,
   },
   {
+    path: "/signup",
+    label: "Sign Up",
+    component: SignUpPage,
+  },
+  {
     path: "/restaurants",
+    label: "Restaurants",
     component: RestaurantsPage,
   },
   {
     path: "/users",
+    label: "Users",
     component: Empty,
     routes: [
       {
@@ -32,8 +36,9 @@ const routes = [
       }
     ]
   },
-  {
+  { // Needs to be last!
     path: "/",
+    label: "Home",
     component: IndexPage,
   },
 ];
