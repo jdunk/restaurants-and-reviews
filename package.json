@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "generate-random-key": "node src/scripts/generate-random-key.js"
+    "generate-random-key": "node src/scripts/generate-random-key.js",
+    "grant-admin-to-user": "node --es-module-specifier-resolution=node src/scripts/grant-admin-to-user.mjs"
   },
   "dependencies": {
     "@fontsource/roboto": "^4.3.0",
@@ -15,6 +16,7 @@
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cookie": "^0.4.1",
+    "dotenv-flow": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.10",
     "next": "10.2.2",
