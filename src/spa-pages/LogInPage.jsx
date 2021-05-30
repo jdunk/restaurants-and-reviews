@@ -118,7 +118,6 @@ export default function LogInPage(props) {
           variant="contained"
           color="primary"
           onClick={(e) => logIn(e)}
-          width="260px"
           fullWidth
           disabled={isProcessing}
         >

@@ -8,7 +8,7 @@ export default function IndexPage({ query }) {
 
   return (
     <Box align='center'>
-      <CircularProgress size={60} />
+      <CircularProgress size={40} />
     </Box>
   )
 }
