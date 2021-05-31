@@ -60,7 +60,7 @@ export default async function handler(req, resp) {
   const modelValidationErr = user.validateSync();
 
   if (modelValidationErr || additionalErrors.length) {
-    return resp.status(400).json({
+    return resp.status(422).json({
       error: {
         message: "Error in form.",
         errors: [
@@ -86,7 +86,7 @@ export default async function handler(req, resp) {
       err.message.indexOf('duplicate key error') !== -1 
       && err.message.indexOf('email') !== -1
     ) {
-      return resp.status(400).json({
+      return resp.status(422).json({
         error: {
           errors: [
             ['email', 'Email unavailable'],
@@ -98,11 +98,10 @@ export default async function handler(req, resp) {
     return resp.status(500).end(err.message)
   }
 
-  // Set auth cookie
-  setAuthCookie(user.email);
-
   try {
     const userFromDb = await User.findOne({ email: user.email });
+
+    setAuthCookie(userFromDb);
 
     return resp.status(200).json({
       data: {

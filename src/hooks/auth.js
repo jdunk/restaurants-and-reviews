@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import apiClient from '../utils/client/api-client.js';
 
 export const AuthContext = createContext();
