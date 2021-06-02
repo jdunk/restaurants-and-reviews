@@ -3,27 +3,28 @@ import apiClient from '../utils/client/api-client';
 
 export default function RestaurantsPage() {
   async function getRestaurants() {
-    const resp = await apiClient.get('/api/restaurants');
-    console.log({ getRestosResp: resp })
+    try {
+      const resp = await apiClient.get('/api/restaurants');
 
-    if (resp.data?.data)
-      return resp.data.data;
+      if (resp?.data?.data)
+        return resp.data.data;
 
-    return false;
+      return;
+    }
+    catch(e) {
+      if (e.config?._redirectPending) return;
+    }
   }
 
   const [restaurants, setRestaurants] = useState();
 
   useEffect(async () => {
-    setRestaurants(await getRestaurants());
+    const res = await getRestaurants();
+    setRestaurants(res);
   }, []);
 
   return (<>
     <h3>Restaurants Page</h3>
-    <pre>
-      {
-        JSON.stringify(restaurants, null, 2)
-      }
-    </pre>
+    <div>{ !restaurants ? '(Skeleton here)' : <pre>{ JSON.stringify(restaurants, null, 2) }</pre> }</div>
   </>);
 };

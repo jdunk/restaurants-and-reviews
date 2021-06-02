@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,13 +12,15 @@ import AppDrawer from './AppDrawer';
 export default function AppBar() {
   const { auth } = useAuth();
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const appBarEl = useRef();
+  const containerEl = useRef();
   
+  useLayoutEffect(() => {
+    containerEl.current.style.height = `${appBarEl.current.offsetHeight}px`;
+  }, [appBarEl, containerEl]);
+
   const setDrawerIsOpenFromEvent = isOpen => event => {
-    console.log({
-      setDrawerIsOpenFromEvent: isOpen
-    });
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      console.log('aborted');
       return;
     }
 
@@ -37,8 +39,8 @@ export default function AppBar() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <MuiAppBar position="static">
+    <div className={classes.root} ref={containerEl}>
+      <MuiAppBar position="fixed" ref={appBarEl}>
         <Toolbar>
           <IconButton onClick={setDrawerIsOpenFromEvent(true)} edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <MenuIcon />

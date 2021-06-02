@@ -77,8 +77,6 @@ export default function SignUpPage(props) {
     try {
       resp = await apiClient.post('/api/signup', values);
 
-      console.log({ signUpResponse: resp });
-
       if (!resp.data?.data?.user) {
         throw new Error('Unexpected response from server')
       }
@@ -88,13 +86,18 @@ export default function SignUpPage(props) {
     } catch (e) {
       setIsProcessing(false);
 
-      if (e.response?.status != 400 || !e.response?.data) {
+      if (e?.response?.status === 403) {
+        setFormErrorMsg('Permission error.');
+        return;
+      }
+
+      if (![400,422].includes(e?.response?.status) || !e?.response?.data) {
         setFormErrorMsg('Unknown error. Perhaps try again later.');
       }
 
-      setFormErrorMsg(e.response?.data?.error?.message);
+      setFormErrorMsg(e?.response?.data?.error?.message);
 
-      const _fieldErrors = e.response?.data?.error?.errors;
+      const _fieldErrors = e?.response?.data?.error?.errors;
       if (!_fieldErrors) return;
 
       setFieldErrors(_fieldErrors);
@@ -213,7 +216,7 @@ export default function SignUpPage(props) {
         </Button>
         <Box mt={3}>
           Already have an account?{' '}
-          <Link href="/login" onClick={(e) => {
+          <Link color="secondary" href="/login" onClick={(e) => {
             e.preventDefault();
             history.push('/login');
           }}>

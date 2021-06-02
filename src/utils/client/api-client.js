@@ -12,19 +12,18 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.response.use(function (response) {
-    console.log({ axiosResponse: response })
     return response;
   }, function (error) {
     if (error.response.status === 403) {
-      console.log('****** PERMISSION ERROR ********');
-
+      // trigger toast notification
     }
     else if (error.response.status === 401) {
-      console.log('++++++++ not logged in ++++++++');
+      // TODO: unset user (in case they *were* logged in)
+      // TODO: remember the page they were on, and then redirect there after login
       history.push('/login');
+      error.config._redirectPending = true;
     }
-    console.log({ axiosErrorResponse: error })
-    return error;
+
     return Promise.reject(error);
   }
 );

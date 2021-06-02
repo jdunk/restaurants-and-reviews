@@ -87,13 +87,18 @@ export default function LogInPage(props) {
     } catch (e) {
       setIsProcessing(false);
 
-      if (![400,403].includes(e.response?.status) || !e.response?.data) {
+      if (e?.response?.status === 403) {
+        setFormErrorMsg('Permission error.');
+        return;
+      }
+
+      if (![400,422].includes(e?.response?.status) || !e?.response?.data) {
         setFormErrorMsg('Unknown error. Perhaps try again later.');
       }
 
-      setFormErrorMsg(e.response?.data?.error?.message);
+      setFormErrorMsg(e?.response?.data?.error?.message);
 
-      const _fieldErrors = e.response?.data?.error?.errors;
+      const _fieldErrors = e?.response?.data?.error?.errors;
       if (!_fieldErrors) return;
 
       setFieldErrors(_fieldErrors);
@@ -102,7 +107,7 @@ export default function LogInPage(props) {
 
   return (
     <Container align="center">
-    <Box width="400px">
+    <Box width="400px" mt={4}>
       <h2>Log In</h2>
       <Paper elevation={3}>
 
@@ -172,7 +177,7 @@ export default function LogInPage(props) {
         </Button>
         <Box mt={3}>
           or{' '}
-          <Link href="/signup" onClick={(e) => {
+          <Link color="secondary" href="/signup" onClick={(e) => {
             e.preventDefault();
             history.push('/signup');
           }}>

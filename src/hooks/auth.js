@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
 import apiClient from '../utils/client/api-client.js';
 
 export const AuthContext = createContext();
@@ -14,13 +13,18 @@ export function ProvideAuth({ children }) {
 }
 
 async function getAuthStatus() {
-  const resp = await apiClient.get('/api/auth-status');
-  console.log({ authStatus: resp })
+  try {
+    const resp = await apiClient.get('/api/auth-status');
+    console.log({ authStatus: resp })
 
-  if (resp.data.data?.user)
-    return resp.data.data.user;
+    if (resp?.data?.data?.user)
+      return resp.data.data.user;
 
-  return false;
+    return false;
+  }
+  catch(e) {
+    // let it return undefined
+  }
 }
 
 export function useProvideAuth() {

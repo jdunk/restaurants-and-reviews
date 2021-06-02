@@ -3,7 +3,7 @@ import AppBar from '../components/AppBar';
 import AppSnackbar from '../components/AppSnackbar';
 import history from '../utils/client/history';
 
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { Router as Router, Switch, Route, Link } from 'react-router-dom';
 import routes from '../config/spa-routes'
 
 export default function AppIndex() {
