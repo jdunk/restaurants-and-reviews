@@ -1,7 +1,8 @@
 import '../styles/globals.css'
 import '@fontsource/roboto';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { ProvideAuth } from '../hooks/auth';
+import { AuthProvider } from '../hooks/auth';
+import { SnackbarProvider } from '../hooks/snackbar';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { amber, blue } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
@@ -21,11 +22,13 @@ function MyApp({ Component, pageProps }) {
   return (
     <div suppressHydrationWarning>
       <CssBaseline />
-      <ProvideAuth>
+      <AuthProvider>
         <ThemeProvider theme={theme}>
-          {typeof window === 'undefined' ? null : <Component {...pageProps} />}
+          <SnackbarProvider>
+              {typeof window === 'undefined' ? null : <Component {...pageProps} />}
+          </SnackbarProvider>
         </ThemeProvider>
-      </ProvideAuth>
+      </AuthProvider>
     </div>
   )
 }

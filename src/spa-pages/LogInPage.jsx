@@ -3,8 +3,8 @@ import { useState } from 'react';
 import useFormValues from '../hooks/useFormValues';
 import useFormErrors from '../hooks/useFormErrors';
 import { useHistory } from 'react-router-dom';
-import apiClient from '../utils/client/api-client';
 import { useAuth } from '../hooks/auth';
+import { useApiClient } from '../hooks/useApiClient';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box'
@@ -37,6 +37,7 @@ const useStyles = makeStyles({
 export default function LogInPage(props) {
   const history = useHistory();
   const { auth } = useAuth();
+  const { apiClient } = useApiClient();
 
   let {
     values,

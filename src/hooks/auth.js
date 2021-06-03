@@ -3,7 +3,7 @@ import apiClient from '../utils/client/api-client.js';
 
 export const AuthContext = createContext();
 
-export function ProvideAuth({ children }) {
+export function AuthProvider({ children }) {
   const auth = useProvideAuth();
   return (
     <AuthContext.Provider value={auth}>
@@ -29,12 +29,6 @@ async function getAuthStatus() {
 
 export function useProvideAuth() {
   const [user, setUser] = useState(null);
-  const logIn = (email, password) => {
-  };
-  const signUp = (email, password) => {
-  };
-  const logOut = () => {
-  };
 
   useEffect(async () => {
     setUser(await getAuthStatus());
@@ -44,12 +38,9 @@ export function useProvideAuth() {
   return {
     user,
     setUser,
-    logIn,
-    signUp,
-    logOut,
   };
 }
 
-export const useAuth = (req, resp) => ({
+export const useAuth = () => ({
   auth: useContext(AuthContext)
 });

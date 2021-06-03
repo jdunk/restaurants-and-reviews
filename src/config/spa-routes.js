@@ -2,6 +2,7 @@ import IndexPage from '../spa-pages/IndexPage.jsx'
 import LogInPage from '../spa-pages/LogInPage.jsx'
 import SignUpPage from '../spa-pages/SignUpPage.jsx'
 import RestaurantsPage from '../spa-pages/RestaurantsPage.jsx'
+import UsersPage from '../spa-pages/UsersPage.jsx'
 
 const Empty = function() { return (<>empty page</>); }
 
@@ -24,7 +25,7 @@ const routes = [
   {
     path: "/users",
     label: "Users",
-    component: Empty,
+    component: UsersPage,
     routes: [
       {
         path: "/users/bus",

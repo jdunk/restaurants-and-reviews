@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../utils/client/api-client';
+import { useApiClient } from '../hooks/useApiClient';
 
 export default function RestaurantsPage() {
+  const { apiClient } = useApiClient();
+
   async function getRestaurants() {
     try {
       const resp = await apiClient.get('/api/restaurants');

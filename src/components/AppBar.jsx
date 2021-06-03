@@ -5,18 +5,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { useAuth } from '../hooks/auth';
 import AuthUser from './AuthUser';
 import AppDrawer from './AppDrawer';
 
 export default function AppBar() {
-  const { auth } = useAuth();
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const appBarEl = useRef();
   const containerEl = useRef();
   
   useLayoutEffect(() => {
-    containerEl.current.style.height = `${appBarEl.current.offsetHeight}px`;
+    containerEl.current.style.height = `${Number(appBarEl.current.offsetHeight) + 20}px`;
   }, [appBarEl, containerEl]);
 
   const setDrawerIsOpenFromEvent = isOpen => event => {
@@ -48,7 +46,7 @@ export default function AppBar() {
           <Typography variant="h6" className={classes.title}>
             Restaurants &amp; Ratings
           </Typography>
-          <AuthUser user={auth.user} />
+          <AuthUser />
         </Toolbar>
       </MuiAppBar>
       <AppDrawer isOpen={drawerIsOpen} onClose={setDrawerIsOpenFromEvent(false)} />

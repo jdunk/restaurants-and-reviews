@@ -9,12 +9,14 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
-export default function AuthUser({ user }) {
+export default function AuthUser() {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const anchorEl = anchorRef.current;
   const { auth } = useAuth();
   const history = useHistory();
+
+  const { user, setUser } = auth;
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -34,7 +36,7 @@ export default function AuthUser({ user }) {
 
     try {
       await apiClient.get('/api/logout')
-      auth.setUser(false);
+      setUser(false);
       history.push('/login')
     } catch (e) {
       console.log(e)
