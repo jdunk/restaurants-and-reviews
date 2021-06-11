@@ -15,6 +15,8 @@ Its stability is supported by a suite of Postman functional tests.
 * Name and Password minimum lengths enforced
 * Email must be unique
 * Role required (Restaurant Owner or Regular user)
+* Erroneous fields are specifically highlighted (colored/outlined in red), and
+* All field-specific error messages are placed directly at (below) the fields they relate to
 * bcrypt password hashing
 
 ### Authentication
