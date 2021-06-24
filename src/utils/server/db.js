@@ -8,6 +8,10 @@ let db;
 module.exports = {
 
   dbConnect() {
+    if (!DB_URI) {
+      throw new Error('Cannot connect to db. DB_URI is not set.');
+    }
+
     if (hasBeenCalled) return;
 
     hasBeenCalled = true;

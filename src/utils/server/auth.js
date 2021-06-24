@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const ACCESS_TOKEN_EXP = process.env.ACCESS_TOKEN_EXP;
 
+if (!JWT_SECRET_KEY) {
+  throw new Error('JWT_SECRET_KEY must be set.');
+}
+
 export function generateAccessToken(userObj) {
   const payload = {
     userId: userObj._id,
