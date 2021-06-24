@@ -33,6 +33,7 @@ export function useProvideSnackbar() {
     setSnackbar,
     messageTypes: {
       403: `You don't have permission to do that.`,
+      500: `An unknown error occurred.`,
     }
   };
 }

@@ -63,7 +63,7 @@ export default function AuthUser() {
           <AccountCircleIcon />
         </Box>
 
-        { user.name }
+        { user?.name }
       </Button>
       <Menu
         anchorEl={anchorEl}

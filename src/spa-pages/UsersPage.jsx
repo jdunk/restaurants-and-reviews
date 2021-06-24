@@ -6,43 +6,48 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 
 export default function UsersPage() {
-  async function getUsers() {
-    try {
-      const resp = await apiClient.get('/api/users');
-      console.log({ getUsersResp: resp })
-
-      if (resp.data?.data)
-        return resp.data.data;
-
-      return;
-    }
-    catch(e) {
-      
-      console.log({ apiClientErrorUsersPage: e })
-      if (e?.config?._redirectPending) return;
-    }
-  }
-
   const [users, setUsers] = useState();
 
   useEffect(async () => {
-    const res = await getUsers();
-    setUsers(res);
+    // Fetch Users
+    try {
+      const resp = await apiClient.get('/api/users');
+
+      if (! resp.data?.data)
+        throw new Error('Error fetching users.');
+
+      setUsers(resp.data.data);
+    }
+    catch(e) {
+      console.error({ apiClientErrorUsersPage: e })
+      if (e?.config?._redirectPending) return;
+
+      setUsers(false);
+    }
   }, []);
 
   return (<Container>
     <h2>Users</h2>
-    <div>{ !users ? '(Skeleton here)' : users.map(user => (
-      <Paper elevation={1}>
-        <Box py={1} px={2} mb={3}>
-          <div>
-            <strong>{user.name}</strong> <span>({capitalize(user.role)})</span>
-          </div>
-          <div>
-            {user.email}
-          </div>
-        </Box>
-      </Paper>
-    )) }</div>
+    <div>
+    {
+      users === false ? <div>An error occurred.</div> : (
+        !users ?
+        '(Skeleton here)'
+        :
+        users.map(user => (
+          <Paper elevation={1}>
+            <Box py={1} px={2} mb={3}>
+              <div>
+                <strong>{user.name}</strong> <span>({capitalize(user.role)})</span>
+              </div>
+              <div>
+                {user.email}
+              </div>
+            </Box>
+          </Paper>
+        ))
+      )
+    }
+    </div>
   </Container>);
 };

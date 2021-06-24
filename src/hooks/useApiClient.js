@@ -25,6 +25,9 @@ export function useApiClient() {
           history.push('/login');
           error.config._redirectPending = true;
         }
+        else if ([500, 503].includes(error.response.status)) {
+          triggerSnackbar({ messageType: 500 });
+        }
 
         return Promise.reject(error);
       }
