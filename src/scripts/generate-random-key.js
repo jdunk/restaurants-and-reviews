@@ -1,1 +1,3 @@
-console.log(require('crypto').randomBytes(64).toString('hex'));
+import crypto from 'crypto';
+
+console.log(crypto.randomBytes(64).toString('hex'));

@@ -1,12 +1,12 @@
+import User from '../models/User.js';
+import dotenv from "dotenv-flow";
+
 if (process.argv.length < 3) {
   exitWithMessage(`You must provide the user's email address as a command-line argument`);
 }
 
 const email = process.argv[2];
 
-import User from '../models/User.js';
-
-import dotenv from "dotenv-flow";
 dotenv.config();
 
 const { dbConnect } = await import('../utils/server/db.js');
