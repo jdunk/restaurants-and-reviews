@@ -4,13 +4,13 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { AuthProvider } from '../hooks/auth';
 import { SnackbarProvider } from '../hooks/snackbar';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { amber, blue } from '@material-ui/core/colors';
+import { grey, blue } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: amber[800],
+      main: grey[900],
     },
     secondary: {
       main: blue[600],
