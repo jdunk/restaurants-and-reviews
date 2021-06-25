@@ -11,28 +11,6 @@ export default async function handler(req, resp) {
 
   const { setAuthCookie } = useAuth(req, resp);
 
-  /*
-  const users = [
-    new User({
-      email: 'reggie@tldmissing',
-      name: 'Reggie Regular',
-      role: 'regular',
-    }),
-    new User({
-      name: 'Regina Regalo',
-      role: 'regular',
-    }),
-    new User({
-      name: 'Owen Owner',
-      role: 'owner',
-    }),
-    new User({
-      name: 'Omer O\'Malley',
-      role: 'owner',
-    }),
-  ];
-  */
-
   await User.init();
 
   const { body } = req;

@@ -1,7 +1,28 @@
 import Restaurant from '../models/Restaurant';
 import { dbConnect } from '../utils/server/db.js';
 
-export async function getRestaurantsForUser(user) {
+export async function fetchAllRestaurants(user) {
   dbConnect();
-  return await Restaurant.find({});
+
+  return await Restaurant.find({
+    isDeleted: false,
+  });
+};
+
+export async function fetchOwnersRestaurants(user) {
+  dbConnect();
+
+  return await Restaurant.find({
+    ownerId: user._id,
+    isDeleted: false,
+  });
+};
+
+export async function deleteRestaurant(_id) {
+  dbConnect();
+
+  return await Restaurant.updateOne({ _id }, {
+    isDeleted: true,
+    deletedAt: Date.now(),
+  });
 };

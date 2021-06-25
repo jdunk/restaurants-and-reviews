@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }) {
       <AuthProvider>
         <ThemeProvider theme={theme}>
           <SnackbarProvider>
-              {typeof window === 'undefined' ? null : <Component {...pageProps} />}
+            {typeof window === 'undefined' ? null : <Component {...pageProps} />}
           </SnackbarProvider>
         </ThemeProvider>
       </AuthProvider>
