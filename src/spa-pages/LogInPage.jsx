@@ -84,7 +84,10 @@ export default function LogInPage(props) {
       }
 
       auth.setUser(resp.data.data.user);
-      history.push('/restaurants');
+      if (history.location.state?.nonAuthUri)
+        history.push(history.location.state.nonAuthUri);
+      else
+        history.push('/restaurants');
     } catch (e) {
       setIsProcessing(false);
 

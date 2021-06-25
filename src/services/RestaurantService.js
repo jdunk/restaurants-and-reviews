@@ -18,10 +18,14 @@ export async function fetchOwnersRestaurants(user) {
   });
 };
 
-export async function deleteRestaurant(_id) {
+export async function deleteRestaurant(_id, ownerId = undefined) {
   dbConnect();
 
-  return await Restaurant.updateOne({ _id }, {
+  const criteria = {
+    _id,
+    ...( ownerId ? { ownerId } : {}),
+  };
+  return await Restaurant.updateOne(criteria, {
     isDeleted: true,
     deletedAt: Date.now(),
   });

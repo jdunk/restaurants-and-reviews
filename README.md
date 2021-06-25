@@ -29,7 +29,7 @@ Its stability is supported by a suite of Postman functional tests.
 * Admin accounts cannot be created via the signup form
 * A CLI script is provided to grant admin privileges to an existing user account
 * Only admin users can see a list of all users
-* Only "Owner" users can create restaurants (wip)
+* Only "Owner" users can create restaurants
 * Only regular users are allowed to leave reviews (wip)
 * Only admin users can delete/edit users (wip)
 * Admin users can delete any review and/or restaurant (wip)

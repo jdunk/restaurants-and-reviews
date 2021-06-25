@@ -10,14 +10,25 @@ export default async function handler(req, resp) {
   const authUser = await requireAuthUser(req, resp);
   if (!authUser) return;
 
+  if (authUser.role === 'regular')
+    return resp.status(403).end();
+
   const { id } = req.query;
 
   try {
     if (req.method === 'DELETE') {
-      const res = await deleteRestaurant(id);
-    }
+      let res;
 
-    return resp.status(204).end();
+      if (authUser.role === 'owner')
+        res = await deleteRestaurant(id, authUser._id);
+      else
+        res = await deleteRestaurant(id);
+
+      if (res.n !== 1)
+        return resp.status(404).end();
+
+      return resp.status(204).end();
+    }
   }
   catch(e) {
     handleError(e, resp);

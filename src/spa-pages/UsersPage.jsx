@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../utils/client/api-client';
+import { useApiClient } from '../hooks/useApiClient';
 import { capitalize } from '../utils/client/string-helper';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 
 export default function UsersPage() {
   const [users, setUsers] = useState();
+  const { apiClient } = useApiClient();
 
   useEffect(async () => {
     // Fetch Users

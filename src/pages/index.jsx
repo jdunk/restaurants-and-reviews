@@ -23,7 +23,6 @@ export default function AppIndex() {
           })
         }
       </Switch>
-
     </Router>
   </>
   );

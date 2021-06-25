@@ -29,6 +29,10 @@ export default async function handler(req, resp) {
 
   // else (method === 'POST')
 
+  if (authUser.role !== 'owner') {
+    return res.status(403).end();
+  }
+
   // Create new restaurant
 
   await Restaurant.init();

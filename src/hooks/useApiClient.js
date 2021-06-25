@@ -21,8 +21,7 @@ export function useApiClient() {
           // Unset user (in the case were they *were* logged in)
           auth.setUser(false);
 
-          // TODO: remember the page they were on, and then redirect there after login
-          history.push('/login');
+          history.push('/login', { nonAuthUri: history.location.pathname });
           error.config._redirectPending = true;
         }
         else if ([500, 503].includes(error.response.status)) {

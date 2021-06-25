@@ -49,15 +49,13 @@ export default function RestaurantsPage() {
   };
 
   const deleteRestaurant = async _id => {
-    console.log(`Delete restaurant: ${_id}`)
     try {
       const resp = await apiClient.delete(`/api/restaurants/${_id}`);
-      console.log({ deleteRestoResp: resp })
 
       setRestaurants(restaurants.filter(x => x._id != _id));
     }
     catch(e) {
-      console.log({ deleteRestoError: e })
+      console.error({ deleteRestoError: e })
     }
   };
 
@@ -97,14 +95,19 @@ export default function RestaurantsPage() {
               key={resto._id}
             >
               <div>
-              <strong>{ resto.name }</strong>
+                <strong>{ resto.name }</strong>
               </div>
-              <IconButton
-                aria-label="delete"
-                onClick={() => deleteRestaurant(resto._id)}
-              >
-                <DeleteIcon />
-              </IconButton>
+              {
+                auth?.user?.role === 'regular' ? null :
+                <div>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => deleteRestaurant(resto._id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              }
             </Paper>
             </Box>
           )
