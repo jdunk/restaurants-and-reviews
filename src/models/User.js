@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const matchesEmailRegex = require('../utils/email-regex')
 
-const SALT_WORK_FACTOR = Number(process.env.SALT_WORK_FACTOR);
+const SALT_WORK_FACTOR = Number(process.env.SALT_WORK_FACTOR || 10);
 
 mongoose.SchemaTypes.String.set('trim', true);
 
