@@ -13,12 +13,16 @@ export default mongoose.models[modelName] || mongoose.model(
     rating: {
       type: Number,
       min: 1,
-      max: 5
+      max: 5,
+      required: [true, 'Rating is required'],
     },
-    visitDate: Date,
-    comment: String,
+    body: {
+      type: String,
+      required: [true, 'Review is required'],
+      minlength: [50, 'Review must be at least 50 characters']
+    },
     reply: {
-      comment: String,
+      body: String,
       owner_user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

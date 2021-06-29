@@ -18,6 +18,15 @@ export async function fetchOwnersRestaurants(user) {
   });
 };
 
+export async function findRestaurantBySlug(slug) {
+  dbConnect();
+
+  return await Restaurant.findOne({
+    slug,
+    isDeleted: false,
+  }).populate('reviews.author', '_id name');
+}
+
 export async function deleteRestaurant(_id, ownerId = undefined) {
   dbConnect();
 

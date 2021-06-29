@@ -12,11 +12,16 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Rating from '@material-ui/lab/Rating';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import TextField from '@material-ui/core/TextField';
 
-export default function RestaurantForm({dialogOpen, onDialogClose, onSaveRestaurant, editId, editName}) {
-  let [formErrorMsg, setFormErrorMsg] = useState(null);
-  let [isProcessing, setIsProcessing] = useState(false);
+export default function ReviewForm({restaurant, dialogOpen, onDialogClose, onSaveReview}) {
+  const [formErrorMsg, setFormErrorMsg] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [ratingLabel, setRatingLabel] = useState(-1);
+
 
   const { auth } = useAuth();
   const { apiClient } = useApiClient();
@@ -26,13 +31,18 @@ export default function RestaurantForm({dialogOpen, onDialogClose, onSaveRestaur
     setValueDirect,
     bindField
   } = useFormValues({
-    name: '',
+    rating: null,
+    review: '',
   });
   let {setFieldErrors, fieldHasError, errorMessageFor} = useFormErrors();
 
-  useEffect(() => {
-    setValueDirect('name', editName);
-  }, [editName]);
+  const ratingLabels = {
+    1: 'Terrible',
+    2: 'Poor',
+    3: 'Fair',
+    4: 'Good',
+    5: 'Excellent',
+  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -43,25 +53,18 @@ export default function RestaurantForm({dialogOpen, onDialogClose, onSaveRestaur
     try {
       let resp;
       
-      if (editId) {
-        resp = await apiClient.put('/api/restaurants', {
-          name: values.name,
-          id: editId,
-        });
-      }
-      else {
-        resp = await apiClient.post('/api/restaurants', {
-          name: values.name,
-        });
-      }
+      resp = await apiClient.post(`/api/restaurants/${restaurant._id}/reviews`, {
+        rating: values.rating,
+        body: values.body,
+      });
 
       if (!resp.data?.data) {
         throw new Error('Unexpected response from server')
       }
 
-      setValueDirect('name', '');
+      setValueDirect('body', '');
       setIsProcessing(false);
-      onSaveRestaurant(resp.data.data);
+      onSaveReview(resp.data.data);
     } catch (e) {
       if (e?.config?._redirectPending) return;
 
@@ -82,22 +85,50 @@ export default function RestaurantForm({dialogOpen, onDialogClose, onSaveRestaur
 
   return (
     <Dialog open={dialogOpen} onClose={onDialogClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{ editId ? 'Edit' : 'Add a' } Restaurant</DialogTitle>
+      <DialogTitle id="form-dialog-title">Add a Review</DialogTitle>
       <DialogContent>
         <Box width="400px" mt={1}>
           <Box py={0}>
           <form onSubmit={submit} noValidate autoComplete="off">
             <Box mb={2}>
+              <Box display="flex" alignItems="center">
+                <Box height="24px">
+                  <Rating
+                    {...(bindField('rating'))}
+                    emptyIcon={<StarBorderIcon fontSize="inherit" />}
+                    onChangeActive={(e, value) => {
+                      setRatingLabel(value);
+                    }}
+                  />
+                </Box>
+                <Box lineHeight="24px" height="21px" ml={1}>
+                {
+                  ratingLabel !== -1 ?
+                    ratingLabels[ratingLabel]
+                    :
+                    (values.rating ? ratingLabels[values.rating] : null)
+                }
+                </Box>
+              </Box>{/* end flex */}
+              <Box ml={1}>
+                <FormHelperText id="rating-helper-text" error={fieldHasError('rating')}>
+                  {errorMessageFor('rating')}
+                </FormHelperText>
+              </Box>
+            </Box>
+            <Box mb={2} mt={1}>
               <TextField
-                id="name"
+                id="review-body"
                 required
                 variant="outlined"
                 fullWidth
-                label="Name"
-                placeholder="Joe's Diner"
-                error={fieldHasError('name')}
-                helperText={errorMessageFor('name')}
-                {...(bindField('name'))}
+                multiline
+                rows={6}
+                rowsMax={10}
+                label="Review"
+                error={fieldHasError('body')}
+                helperText={errorMessageFor('body')}
+                {...(bindField('body'))}
               />
             </Box>
             <Box color="error.main">

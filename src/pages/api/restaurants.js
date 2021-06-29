@@ -5,7 +5,7 @@ import { fetchAllRestaurants, fetchOwnersRestaurants } from '../../services/Rest
 import Restaurant from '../../models/Restaurant';
 
 export default async function handler(req, resp) {
-  if (!allowedMethodsCheck(req, resp, ['GET','POST']))
+  if (!allowedMethodsCheck(req, resp, ['GET','POST','PUT']))
     return;
 
   const authUser = await requireAuthUser(req, resp);
@@ -27,23 +27,44 @@ export default async function handler(req, resp) {
     });
   }
 
-  // else (method === 'POST')
+  // else (method is 'POST' or 'PUT')
 
-  if (authUser.role !== 'owner') {
+  const { body } = req;
+  const { name, id } = body;
+
+  if (authUser.role === 'regular') {
     return res.status(403).end();
   }
 
-  // Create new restaurant
+  let resto;
 
-  await Restaurant.init();
+  if (req.method === 'PUT') {
+    if (!id)
+      return res.status(422).end('id is required');
 
-  const { body } = req;
-  const { name } = body;
+    resto = await Restaurant.findOne({
+      _id: id,
+      ...( authUser.role === 'owner' ? { ownerId: authUser._id } : {} ),
+    });
 
-  const resto = new Restaurant({
-    ownerId: authUser._id,
-    name,
-  });
+    if (!resto)
+      return resp.status(404).end();
+
+    resto.name = name;
+  }
+
+  if (req.method === 'POST') {
+    if (authUser.role !== 'owner') {
+      return res.status(403).end();
+    }
+
+    await Restaurant.init();
+
+    resto = new Restaurant({
+      ownerId: authUser._id,
+      name,
+    });
+  }
 
   const modelValidationErr = resto.validateSync();
 
@@ -70,7 +91,7 @@ export default async function handler(req, resp) {
     return resp.status(500).end(e.message);
   }
 
-  return resp.status(201).json({
+  return resp.status( req.method === 'PUT' ? 200 : 201 ).json({
     data: resto
   });
 };

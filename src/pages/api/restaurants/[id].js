@@ -1,22 +1,27 @@
 import { allowedMethodsCheck } from '../../../middleware/allowed-methods';
 import { requireAuthUser } from '../../../middleware/auth';
 import { handleError } from '../../../middleware/error-handler';
-import { deleteRestaurant } from '../../../services/RestaurantService';
+import { findRestaurantBySlug, deleteRestaurant } from '../../../services/RestaurantService';
 
 export default async function handler(req, resp) {
-  if (!allowedMethodsCheck(req, resp, ['PUT', 'DELETE']))
+  if (!allowedMethodsCheck(req, resp, ['GET','PUT','DELETE']))
     return;
 
   const authUser = await requireAuthUser(req, resp);
   if (!authUser) return;
 
-  if (authUser.role === 'regular')
-    return resp.status(403).end();
-
   const { id } = req.query;
 
   try {
+    if (req.method === 'GET') {
+      const res = await findRestaurantBySlug(id);
+      return resp.status(200).json({ data: res });
+    }
+
     if (req.method === 'DELETE') {
+      if (authUser.role === 'regular')
+        return resp.status(403).end();
+
       let res;
 
       if (authUser.role === 'owner')

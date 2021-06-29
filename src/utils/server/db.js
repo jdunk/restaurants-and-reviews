@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const DB_URI = process.env.MONGODB_URI;
 
-let hasBeenCalled = false;
 let db;
 
 module.exports = {
@@ -12,9 +11,9 @@ module.exports = {
       throw new Error('Cannot connect to db. DB_URI is not set.');
     }
 
-    if (hasBeenCalled) return;
+    if ('dbConnInitiated' in global) return;
 
-    hasBeenCalled = true;
+    global.dbConnInitiated = true;
 
     mongoose.set('returnOriginal', false);
     mongoose.set('useCreateIndex', true);

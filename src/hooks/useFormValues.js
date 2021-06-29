@@ -10,9 +10,17 @@ export default function useFormValues(initialValues) {
     });
   };
 
+  const setValueDirect = (name, value) => {
+    setValues({
+      ...values,
+      [name]: value,
+    });
+  };
+
   return {
     values,
     setValue,
+    setValueDirect,
     bindField: (fieldName) => ({
       name: fieldName,
       value: values[fieldName],

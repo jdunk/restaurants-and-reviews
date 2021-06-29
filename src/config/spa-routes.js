@@ -2,6 +2,7 @@ import IndexPage from '../spa-pages/IndexPage.jsx'
 import LogInPage from '../spa-pages/LogInPage.jsx'
 import SignUpPage from '../spa-pages/SignUpPage.jsx'
 import RestaurantsPage from '../spa-pages/RestaurantsPage.jsx'
+import RestaurantPage from '../spa-pages/RestaurantPage.jsx'
 import UsersPage from '../spa-pages/UsersPage.jsx'
 
 const Empty = function() { return (<>empty page</>); }
@@ -16,6 +17,11 @@ const routes = [
     path: "/signup",
     label: "Sign Up",
     component: SignUpPage,
+  },
+  {
+    path: "/restaurants/:slug",
+    label: "Restaurant",
+    component: RestaurantPage,
   },
   {
     path: "/restaurants",
