@@ -57,8 +57,17 @@ export default async function handler(req, resp) {
       { $push: { reviews: review } }
     );
 
+    if (dbRes.n !== 1)
+      throw new Error('db error occurred when trying to to save review.');
+
     return resp.status(201).json({
-      data: dbRes
+      data: {
+        ...review.toObject(),
+        author: {
+          _id: authUser.id,
+          name: authUser.name,
+        },
+      },
     });
   }
   catch(e) {

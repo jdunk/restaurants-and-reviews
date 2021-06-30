@@ -31,7 +31,7 @@ export default function ReviewForm({restaurant, dialogOpen, onDialogClose, onSav
     setValueDirect,
     bindField
   } = useFormValues({
-    rating: null,
+    rating: -1,
     review: '',
   });
   let {setFieldErrors, fieldHasError, errorMessageFor} = useFormErrors();
@@ -54,7 +54,7 @@ export default function ReviewForm({restaurant, dialogOpen, onDialogClose, onSav
       let resp;
       
       resp = await apiClient.post(`/api/restaurants/${restaurant._id}/reviews`, {
-        rating: values.rating,
+        rating: values.rating === -1 ? null : values.rating,
         body: values.body,
       });
 

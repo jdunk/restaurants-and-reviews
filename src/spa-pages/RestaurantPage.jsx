@@ -68,7 +68,6 @@ export default function RestaurantPage({ match }) {
     try {
       const resp = await apiClient.get(`/api/restaurants/${match?.params?.slug}`);
 
-      console.log({ restRest: resp })
       if (resp?.data?.data)
         return setRestaurant(resp.data.data);
 
@@ -100,7 +99,7 @@ export default function RestaurantPage({ match }) {
 
   const onSaveReview = (review) => {
     setReviews([
-      ...(reviews || []),
+      ...(restaurant.reviews || []),
       review,
     ]);
     onDialogClose();
@@ -110,7 +109,7 @@ export default function RestaurantPage({ match }) {
     try {
       const resp = await apiClient.delete(`/api/restaurants/${restaurant._id}/reviews/${_id}`);
 
-      setReviews(reviews.filter(x => x._id != _id));
+      setReviews(restaurant.reviews.filter(x => x._id != _id));
     }
     catch(e) {
       console.error({ deleteReviewError: e })
@@ -164,8 +163,7 @@ export default function RestaurantPage({ match }) {
       <Box mr={1}>
         <strong>Sort By:</strong>
       </Box>
-      <FormControl
-          >
+      <FormControl>
         <Select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}

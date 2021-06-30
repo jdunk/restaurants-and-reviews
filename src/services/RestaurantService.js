@@ -1,12 +1,24 @@
+import mongoose from 'mongoose';
+
 import Restaurant from '../models/Restaurant';
 import { dbConnect } from '../utils/server/db.js';
 
 export async function fetchAllRestaurants(user) {
   dbConnect();
 
-  return await Restaurant.find({
-    isDeleted: false,
-  });
+  return await Restaurant.aggregate()
+    .match({ isDeleted: false })
+    .project({
+      ...Object.keys(Restaurant.schema.paths).reduce((carry, k) => ({ ...carry, [k]: true }), {}),
+      reviews: {
+        $filter: {
+          input: '$reviews',
+          cond: {
+            $eq: ['$$this.isDeleted', false],
+          },
+        },
+      },
+    });
 };
 
 export async function fetchOwnersRestaurants(user) {
@@ -21,46 +33,59 @@ export async function fetchOwnersRestaurants(user) {
 export async function getRestaurantById(_id) {
   dbConnect();
 
-  return await Restaurant.findOne({
-    _id,
-    isDeleted: false,
-  }).populate({
-    path: 'reviews.author',
-    select: '_id name',
-    match: {
-      isDeleted: false,
-    },
-  });
-}
+  const results = await Restaurant.aggregate()
+    .match({ _id: mongoose.Types.ObjectId(_id), isDeleted: false })
+    .project({
+      ...Object.keys(Restaurant.schema.paths).reduce((carry, k) => ({ ...carry, [k]: true }), {}),
+      reviews: {
+        $filter: {
+          input: '$reviews',
+          cond: {
+            $eq: ['$$this.isDeleted', false],
+          },
+        },
+      },
+    });
+  
+  const resto = Restaurant.hydrate(results[0]);
 
-export async function getReviewById(restoId, reviewId) {
-  dbConnect();
-
-  return await Restaurant.findOne({
-    _id,
-    isDeleted: false,
-  }).populate({
-    path: 'reviews.author',
-    select: '_id name',
-    match: {
-      isDeleted: false,
-    },
-  });
+  return await Restaurant
+    .populate(resto, {
+      path: 'reviews.author',
+      select: '_id name',
+      match: {
+        isDeleted: false,
+      }
+    });
 }
 
 export async function findRestaurantBySlug(slug) {
   dbConnect();
 
-  return await Restaurant.findOne({
-    slug,
-    isDeleted: false,
-  }).populate({
-    path: 'reviews.author',
-    select: '_id name',
-    match: {
-      isDeleted: false,
-    },
-  });
+  const results = await Restaurant.aggregate()
+    .match({ slug, isDeleted: false })
+    .project({
+      ...Object.keys(Restaurant.schema.paths).reduce((carry, k) => ({ ...carry, [k]: true }), {}),
+      reviews: {
+        $filter: {
+          input: '$reviews',
+          cond: {
+            $eq: ['$$this.isDeleted', false],
+          },
+        },
+      },
+    });
+  
+  const resto = Restaurant.hydrate(results[0]);
+
+  return await Restaurant
+    .populate(resto, {
+      path: 'reviews.author',
+      select: '_id name',
+      match: {
+        isDeleted: false,
+      }
+    });
 }
 
 export async function deleteRestaurant(_id, ownerId = undefined) {
