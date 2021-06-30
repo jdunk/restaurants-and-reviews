@@ -1,6 +1,5 @@
 import { allowedMethodsCheck } from '../../../../../middleware/allowed-methods';
 import { requireAuthUser } from '../../../../../middleware/auth';
-import { findRestaurantBySlug } from '../../../../../services/RestaurantService';
 
 import Restaurant from '../../../../../models/Restaurant';
 import Review from '../../../../../models/Review';

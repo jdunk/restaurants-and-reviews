@@ -108,9 +108,9 @@ export default function RestaurantPage({ match }) {
 
   const deleteReview = async _id => {
     try {
-      // const resp = await apiClient.delete(`/api/restaurants/${_id}`);
+      const resp = await apiClient.delete(`/api/restaurants/${restaurant._id}/reviews/${_id}`);
 
-      // setReviews(reviews.filter(x => x._id != _id));
+      setReviews(reviews.filter(x => x._id != _id));
     }
     catch(e) {
       console.error({ deleteReviewError: e })
