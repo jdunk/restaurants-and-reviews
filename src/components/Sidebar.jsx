@@ -27,49 +27,23 @@ export default function Sidebar() {
   return (
     <Box className={ classes.sidebar } py={8}>
       <Grid container direction="column" spacing={10}>
-        <Grid item>
-          <Grid container justify="space-evenly">
-            <Grid item>
-              <RestaurantIcon />
-            </Grid>
-            <Grid item>
-              <FastfoodOutlinedIcon />
-            </Grid>
-          </Grid>
+        <Grid item container justify="space-evenly">
+          <RestaurantIcon />
+          <FastfoodOutlinedIcon />
         </Grid>
-        <Grid item>
-          <Grid container spacing={0} justify="space-evenly">
-            <Grid item>
-              <InsertEmoticonOutlinedIcon />
-            </Grid>
-          </Grid>
+        <Grid item container justify="space-evenly">
+          <InsertEmoticonOutlinedIcon />
         </Grid>
-        <Grid item>
-          <Grid container spacing={0} justify="space-evenly">
-            <Grid item>
-              <FastfoodOutlinedIcon />
-            </Grid>
-            <Grid item>
-              <LocalDiningIcon />
-            </Grid>
-          </Grid>
+        <Grid item container justify="space-evenly">
+          <FastfoodOutlinedIcon />
+          <LocalDiningIcon />
         </Grid>
-        <Grid item>
-          <Grid container spacing={0} justify="space-evenly">
-            <Grid item>
-              <LocalBarIcon />
-            </Grid>
-          </Grid>
+        <Grid item container justify="space-evenly">
+          <LocalBarIcon />
         </Grid>
-        <Grid item>
-          <Grid container spacing={0} justify="space-evenly">
-            <Grid item>
-              <StarIcon />
-            </Grid>
-            <Grid item>
-              <FastfoodOutlinedIcon />
-            </Grid>
-          </Grid>
+        <Grid item container justify="space-evenly">
+          <StarIcon />
+          <FastfoodOutlinedIcon />
         </Grid>
       </Grid>
     </Box>
