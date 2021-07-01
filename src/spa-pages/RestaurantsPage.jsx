@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import ContentWithSidebar from '../components/layout/ContentWithSidebar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FormControl from '@material-ui/core/FormControl';
@@ -114,10 +115,10 @@ export default function RestaurantsPage() {
   };
 
   return (<Container>
-    <h2>{ isOwner ? 'My ' : '' }Restaurants</h2>
+    <h1>{ isOwner ? 'My ' : '' }Restaurants</h1>
     {
       isOwner ? (<>
-        <Box borderRadius={20} pr={2} clone>
+        <Box borderRadius={20} pr={2} mb={3} clone>
           <Button
             variant="contained"
             size="small"
@@ -138,80 +139,81 @@ export default function RestaurantsPage() {
       </>) : null
     }
 
-    <Box
-      display="flex"
-      alignItems="center"
-      py={1} px={2} mt={3}
-      boxShadow={1}
-      className={classes.toolbarRoot}
-      style={{
-        backgroundColor: '#f0f0f0',
-        borderRadius: '4px',
-        border: '1px solid #e0e0dd',
-      }}
-    >
-      <Box mr={1}>
-        <strong>Sort By:</strong>
-      </Box>
-      <FormControl
+    <ContentWithSidebar>
+      <Box
+        display="flex"
+        alignItems="center"
+        py={1} px={2} mb={3}
+        boxShadow={1}
+        className={classes.toolbarRoot}
+        style={{
+          backgroundColor: '#f0f0f0',
+          borderRadius: '4px',
+          border: '1px solid #e0e0dd',
+        }}
+      >
+        <Box mr={1}>
+          <strong>Sort By:</strong>
+        </Box>
+        <FormControl>
+          <Select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            displayEmpty
+            inputProps={{ 'aria-label': 'Sort By' }}
           >
-        <Select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Sort By' }}
-        >
-          <MenuItem value={'rating-desc'}>Highest Avg Rating</MenuItem>
-          <MenuItem value={'rating-asc'}>Lowest Avg Rating</MenuItem>
-          <MenuItem value={'name-asc'}>Name (A-Z)</MenuItem>
-          <MenuItem value={'name-desc'}>Name (Z-A)</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+            <MenuItem value={'rating-desc'}>Highest Avg Rating</MenuItem>
+            <MenuItem value={'rating-asc'}>Lowest Avg Rating</MenuItem>
+            <MenuItem value={'name-asc'}>Name (A-Z)</MenuItem>
+            <MenuItem value={'name-desc'}>Name (Z-A)</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
 
-    <Box mt={3}>
-    {
-      restaurants === false ? <div>An error occurred.</div> : (
-        !restaurants ?
-          '(Skeleton here)'
-          :
-          restaurants.sort(sorters[sortOrder]).map(resto =>
-            <Box py={2} px={2} mb={3}
-              key={resto._id}
-              clone
-            >
-            <Paper
-              key={resto._id}
-              style={{
-                cursor: 'pointer'
-              }}
-              className={ classes.restoRoot }
-            >
-              <div className="restoName">
-                <Link href={`/restaurants/${resto.slug}`}><strong>{ resto.name }</strong></Link>
-              </div>
-              {
-                auth?.user?.role === 'regular' ? null :
-                <div>
-                  <IconButton
-                    aria-label="edit"
-                    onClick={() => editRestaurant(resto)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => deleteRestaurant(resto._id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+      <Box>
+      {
+        restaurants === false ? <div>An error occurred.</div> : (
+          !restaurants ?
+            '(Skeleton here)'
+            :
+            restaurants.sort(sorters[sortOrder]).map(resto =>
+              <Box py={2} px={2} mb={3}
+                key={resto._id}
+                clone
+              >
+              <Paper
+                key={resto._id}
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={ classes.restoRoot }
+              >
+                <div className="restoName">
+                  <Link href={`/restaurants/${resto.slug}`}><strong>{ resto.name }</strong></Link>
                 </div>
-              }
-            </Paper>
-            </Box>
-          )
-      )
-    }
-    </Box>
+                {
+                  auth?.user?.role === 'regular' ? null :
+                  <div>
+                    <IconButton
+                      aria-label="edit"
+                      onClick={() => editRestaurant(resto)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => deleteRestaurant(resto._id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
+                }
+              </Paper>
+              </Box>
+            )
+        )
+      }
+      </Box>
+    </ContentWithSidebar>
   </Container>);
 };

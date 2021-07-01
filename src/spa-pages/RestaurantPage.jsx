@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import ContentWithSidebar from '../components/layout/ContentWithSidebar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
@@ -43,7 +44,7 @@ const useStyles = makeStyles({
       lineHeight: '200%',
       color: '#777',
     }
-  }
+  },
 });
 
 const sorters = {
@@ -125,10 +126,10 @@ export default function RestaurantPage({ match }) {
   };
 
   return (<Container>
-    <h2>{ restaurant?.name }</h2>
+    <h1>{ restaurant?.name }</h1>
     {
       isRegUser ? (<>
-        <Box borderRadius={20} pr={2} clone>
+        <Box borderRadius={20} pr={2} mb={3} clone>
           <Button
             variant="contained"
             size="small"
@@ -148,10 +149,11 @@ export default function RestaurantPage({ match }) {
       </>) : null
     }
 
+    <ContentWithSidebar>
     <Box
       display="flex"
       alignItems="center"
-      py={1} px={2} mt={3}
+      py={1} px={2}
       boxShadow={1}
       className={classes.toolbarRoot}
       style={{
@@ -220,7 +222,7 @@ export default function RestaurantPage({ match }) {
                   { review.body.split('\n').map((line, i) => <p key={i}>{line}</p>) }
                 </div>
                 {
-                  auth?.user?.role !== 'admin' && review.author?._id !== auth.user._id ? null :
+                  auth?.user?.role !== 'admin' && review.author?._id !== auth.user?._id ? null :
                   <div>
                     <IconButton
                       aria-label="delete"
@@ -237,5 +239,6 @@ export default function RestaurantPage({ match }) {
       )
     }
     </Box>
+    </ContentWithSidebar>
   </Container>);
 };
