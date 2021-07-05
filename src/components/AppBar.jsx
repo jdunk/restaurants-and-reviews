@@ -44,7 +44,7 @@ export default function AppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Restaurants &amp; Ratings
+            Restaurants &amp; Reviews
           </Typography>
           <AuthUser />
         </Toolbar>

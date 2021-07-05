@@ -32,13 +32,14 @@ const useStyles = makeStyles({
     marginBottom: '0.1rem',
   },
   'restoInfoRoot': {
-    'alignItems': 'center',
+    alignItems: 'center',
+    lineHeight: '1',
     '& .avgRating': {
       fontWeight: 'bold',
-      fontSize: '1.2em',
+      fontSize: '0.95rem',
     },
     '& .numReviews': {
-      fontSize: '1.1em',
+      fontSize: '0.85rem',
       color: '#555',
     },
   },
@@ -145,7 +146,12 @@ export default function RestaurantPage({ match }) {
 
   const avgRatingDisplay = restaurant?.avgRating ? roundToNPlaces(restaurant.avgRating, 1) : '';
   const avgRatingValue = avgRatingDisplay || -1;
-  const numReviewsDisplay = restaurant?.numReviews ? `(${restaurant.numReviews} reviews)` : '';
+  const numReviewsDisplay = restaurant ? (
+      restaurant.numReviews ? `(${restaurant.numReviews} reviews)` : '(No reviews yet)'
+    )
+    :
+    ''
+  ;
 
   return (<Container>
     <h1 className={classes.restoName}>{ restaurant?.name }</h1>
@@ -153,13 +159,15 @@ export default function RestaurantPage({ match }) {
       <Box title={ `${avgRatingDisplay} avg rating` }>
         <Rating
           value={ avgRatingValue }
-          precision={0.05}
+          precision={0.1}
           readOnly
         />
       </Box>
-      <Box className="avgRating" ml={1}>
-        { avgRatingDisplay }
-      </Box>
+      {
+        avgRatingDisplay ? <Box className="avgRating" ml={1}>
+          { avgRatingDisplay }
+        </Box> : null
+      }
       <Box className="numReviews" ml={1}>
         { numReviewsDisplay }
       </Box>

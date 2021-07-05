@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';
 import { useApiClient } from '../hooks/useApiClient';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,7 +14,6 @@ import ContentWithSidebar from '../components/layout/ContentWithSidebar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FormControl from '@material-ui/core/FormControl';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -21,6 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import Rating from '@material-ui/lab/Rating';
 import RestaurantIcon from '@material-ui/icons/Restaurant';
 import Select from '@material-ui/core/Select';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 const useStyles = makeStyles({
   'toolbarRoot': {
@@ -32,18 +33,18 @@ const useStyles = makeStyles({
   'restoRoot': {
     '& .icon': {
       backgroundColor: '#e3e3e3',
-      height: '7rem',
-      width: '7rem',
+      height: '5.2rem',
+      width: '5.2rem',
       '& .MuiSvgIcon-root': {
-        width: '3rem',
-        height: '6rem',
+        width: '2.3rem',
+        height: '5.2rem',
         color: '#bbc',
       },
     },
     '& .restoName': {
       fontSize: '1.2rem',
       '& a': {
-        color: '#600',
+        color: '#02b',
       },
     },
     '& .rating': {
@@ -54,7 +55,10 @@ const useStyles = makeStyles({
       },
     },
     '& .numReviews': {
-      fontSize: '1.0rem',
+      fontSize: '0.92rem',
+    },
+    '& .noReviews': {
+      color: '#777',
     },
   }
 });
@@ -69,6 +73,7 @@ const sorters = {
 export default function RestaurantsPage() {
   const { auth } = useAuth();
   const { apiClient } = useApiClient();
+  const history = useHistory();
 
   async function getRestaurants() {
     try {
@@ -140,6 +145,11 @@ export default function RestaurantsPage() {
     setEditName(r.name);
   };
 
+  const goToRestoPage = (slug, e) => {
+    e.preventDefault();
+    history.push(`/restaurants/${slug}`);
+  };
+
   return (<Container>
     <h1>{ isOwner ? 'My ' : '' }Restaurants</h1>
     {
@@ -202,7 +212,7 @@ export default function RestaurantsPage() {
             '(Skeleton here)'
             :
             restaurants.sort(sorters[sortOrder]).map(resto =>
-              <Box py={2} px={2} mb={3}
+              <Box py={1} px={1} mb={3}
                 key={resto._id}
                 clone
               >
@@ -212,27 +222,50 @@ export default function RestaurantsPage() {
                   cursor: 'pointer'
                 }}
                 className={ classes.restoRoot }
+                onClick={(e) => goToRestoPage(resto.slug, e)}
               >
-                <Grid container spacing={3}>
-                  <Grid item className="icon" align="center">
+                <Box display="flex" alignItems="center">
+                  <Box className="icon" align="center">
                     <RestaurantIcon />
-                  </Grid>
-                  <Grid item>
+                  </Box>
+                  <Box ml={1.5}>
                     <Box className="restoName">
-                      <Link href={`/restaurants/${resto.slug}`}><strong>{ resto.name }</strong></Link>
+                      <Link
+                        onClick={(e) => goToRestoPage(resto.slug, e)}
+                        href={`/restaurants/${resto.slug}`}
+                      >
+                        <strong>{ resto.name }</strong>
+                      </Link>
                     </Box>
-                    <Box className="rating">
-                      <Rating
-                        precision={0.05}
-                        value={3.55}
-                        readOnly
-                      />
-                    </Box>
-                    <Box className="numReviews">
-                      2 reviews
-                    </Box>
-                  </Grid>
-                </Grid>
+                    {
+                      resto.numReviews ? (<>
+                        <Box className="rating">
+                          <Rating
+                            precision={0.05}
+                            value={3.55}
+                            readOnly
+                          />
+                        </Box>
+                        <Box className="numReviews">
+                          { resto.numReviews } reviews
+                        </Box>
+                      </>)
+                      :
+                      /* Restaurant has no reviews yet */
+                      (<>
+                        <Box className="rating">
+                          <Rating
+                            emptyIcon={<StarBorderIcon fontSize="inherit" />}
+                            readOnly
+                          />
+                        </Box>
+                        <Box className="noReviews">
+                          No reviews yet
+                        </Box>
+                      </>)
+                    }
+                  </Box>
+                </Box>
 
                 {
                   auth?.user?.role === 'regular' ? null :

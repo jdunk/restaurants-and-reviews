@@ -14,8 +14,6 @@ export default function AppDrawer({ isOpen, onClose }) {
   const history = useHistory();
   
   const useStyles = makeStyles((theme) => ({
-    root: {
-    },
     list: {
       width: 250,
     },
@@ -24,7 +22,7 @@ export default function AppDrawer({ isOpen, onClose }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div>
       <Drawer open={isOpen} onClose={onClose}>
         <div
           className={classes.list}
