@@ -2,6 +2,7 @@ import { allowedMethodsCheck } from '../../../../../middleware/allowed-methods';
 import { requireAuthUser } from '../../../../../middleware/auth';
 
 import Restaurant from '../../../../../models/Restaurant';
+import { getRestaurantById, calculateMetadata } from '../../../../../services/RestaurantService';
 import Review from '../../../../../models/Review';
 
 export default async function handler(req, resp) {
@@ -27,12 +28,10 @@ export default async function handler(req, resp) {
     return res.status(422).end('restaurant id missing from URL');
 
   try {
-    const resto = await Restaurant.findOne({ _id: id });
+    const resto = await getRestaurantById(id);
 
     if (!resto)
       return resp.status(404).end();
-
-    review.restaurant = resto._id;
 
     const modelValidationErr = review.validateSync();
 
@@ -52,9 +51,19 @@ export default async function handler(req, resp) {
       });
     }
 
+    // Request is valid. Save review and update metadata.
+
+    const { avgRating, numReviews } = calculateMetadata([...resto.reviews, review]);
+
     const dbRes = await Restaurant.updateOne(
       { _id: resto._id }, 
-      { $push: { reviews: review } }
+      {
+        $push: { reviews: review },
+        $set: {
+          avgRating,
+          numReviews,
+        }
+      }
     );
 
     if (dbRes.n !== 1)
@@ -66,6 +75,10 @@ export default async function handler(req, resp) {
         author: {
           _id: authUser.id,
           name: authUser.name,
+        },
+        restaurant: {
+          avgRating,
+          numReviews,
         },
       },
     });

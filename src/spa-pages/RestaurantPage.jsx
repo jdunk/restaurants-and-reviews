@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/auth';
 import { useApiClient } from '../hooks/useApiClient';
+import { roundToNPlaces } from '../utils/formatting.js';
+
 import { makeStyles } from '@material-ui/core/styles';
 
 import ReviewForm from '../components/ReviewForm';
@@ -25,23 +27,39 @@ const useStyles = makeStyles({
       padding: '3px 25px 5px 6px',
     }
   },
+  'restoName': {
+    marginTop: '0.5rem',
+    marginBottom: '0.1rem',
+  },
+  'restoInfoRoot': {
+    'alignItems': 'center',
+    '& .avgRating': {
+      fontWeight: 'bold',
+      fontSize: '1.2em',
+    },
+    '& .numReviews': {
+      fontSize: '1.1em',
+      color: '#555',
+    },
+  },
   'reviewRoot': {
     '& .reviewRating': {
+      lineHeight: 1,
       '& .text': {
         fontSize: '1.8rem',
         fontWeight: 700,
-        lineHeight: 1,
       },
       '& .textDenominator': {
+        alignSelf: 'flex-start',
         fontSize: '1rem',
         fontWeight: 400,
         color: '#bbb',
+        paddingTop: '1px',
         paddingLeft: '2px',
         letterSpacing: '1px',
       },
     },
     '& .reviewDate': {
-      lineHeight: '200%',
       color: '#777',
     }
   },
@@ -125,8 +143,27 @@ export default function RestaurantPage({ match }) {
     setDialogOpen(true);
   };
 
+  const avgRatingDisplay = restaurant?.avgRating ? roundToNPlaces(restaurant.avgRating, 1) : '';
+  const avgRatingValue = avgRatingDisplay || -1;
+  const numReviewsDisplay = restaurant?.numReviews ? `(${restaurant.numReviews} reviews)` : '';
+
   return (<Container>
-    <h1>{ restaurant?.name }</h1>
+    <h1 className={classes.restoName}>{ restaurant?.name }</h1>
+    <Box display="flex" alignItems="center" className={classes.restoInfoRoot} mb={1}>
+      <Box title={ `${avgRatingDisplay} avg rating` }>
+        <Rating
+          value={ avgRatingValue }
+          precision={0.05}
+          readOnly
+        />
+      </Box>
+      <Box className="avgRating" ml={1}>
+        { avgRatingDisplay }
+      </Box>
+      <Box className="numReviews" ml={1}>
+        { numReviewsDisplay }
+      </Box>
+    </Box>
     {
       isRegUser ? (<>
         <Box borderRadius={20} pr={2} mb={3} clone>
@@ -196,7 +233,7 @@ export default function RestaurantPage({ match }) {
               className={ classes.reviewRoot }
             >
               <div className="reviewBody">
-                <Box className="reviewRating" display="flex" mb={1}>
+                <Box className="reviewRating" display="flex" alignItems="center" mb={1}>
                   <div className="text">
                     {review.rating}
                   </div>

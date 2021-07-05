@@ -1,0 +1,1 @@
+export const roundToNPlaces = (num, n = 2) => Math.round((num + Number.EPSILON) * Math.pow(10, n)) / Math.pow(10, n);

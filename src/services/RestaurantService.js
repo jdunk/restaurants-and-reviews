@@ -112,3 +112,20 @@ export async function deleteReview(restoId, reviewId) {
     $set: { 'reviews.$.isDeleted': true, }
   });
 };
+
+export function calculateMetadata(reviews) {
+  return reviews.reduce(
+    (obj, review) => ({
+      avgRating: obj.numReviews ?
+        (obj.avgRating * obj.numReviews + review.rating) / (obj.numReviews + 1)
+        :
+        obj.avgRating = review.rating,
+
+      numReviews: obj.numReviews + 1,
+    }),
+    {
+      avgRating: null,
+      numReviews: 0,
+    }
+  );
+};

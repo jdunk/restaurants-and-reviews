@@ -13,10 +13,13 @@ import ContentWithSidebar from '../components/layout/ContentWithSidebar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
+import Rating from '@material-ui/lab/Rating';
+import RestaurantIcon from '@material-ui/icons/Restaurant';
 import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles({
@@ -27,9 +30,32 @@ const useStyles = makeStyles({
     }
   },
   'restoRoot': {
+    '& .icon': {
+      backgroundColor: '#e3e3e3',
+      height: '7rem',
+      width: '7rem',
+      '& .MuiSvgIcon-root': {
+        width: '3rem',
+        height: '6rem',
+        color: '#bbc',
+      },
+    },
     '& .restoName': {
       fontSize: '1.2rem',
-    }
+      '& a': {
+        color: '#600',
+      },
+    },
+    '& .rating': {
+      marginTop: '2px',
+      marginLeft: '-3px',
+      '& > span': {
+        fontSize: '1.2rem',
+      },
+    },
+    '& .numReviews': {
+      fontSize: '1.0rem',
+    },
   }
 });
 
@@ -142,7 +168,6 @@ export default function RestaurantsPage() {
     <ContentWithSidebar>
       <Box
         display="flex"
-        alignItems="center"
         py={1} px={2} mb={3}
         boxShadow={1}
         className={classes.toolbarRoot}
@@ -188,9 +213,27 @@ export default function RestaurantsPage() {
                 }}
                 className={ classes.restoRoot }
               >
-                <div className="restoName">
-                  <Link href={`/restaurants/${resto.slug}`}><strong>{ resto.name }</strong></Link>
-                </div>
+                <Grid container spacing={3}>
+                  <Grid item className="icon" align="center">
+                    <RestaurantIcon />
+                  </Grid>
+                  <Grid item>
+                    <Box className="restoName">
+                      <Link href={`/restaurants/${resto.slug}`}><strong>{ resto.name }</strong></Link>
+                    </Box>
+                    <Box className="rating">
+                      <Rating
+                        precision={0.05}
+                        value={3.55}
+                        readOnly
+                      />
+                    </Box>
+                    <Box className="numReviews">
+                      2 reviews
+                    </Box>
+                  </Grid>
+                </Grid>
+
                 {
                   auth?.user?.role === 'regular' ? null :
                   <div>
